@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "DataFeedTableViewController.h"
 
 @interface AppDelegate ()
 
@@ -17,6 +18,15 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    DataFeedTableViewController *viewController = [[DataFeedTableViewController alloc] init];
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    UINavigationController *navController = [[UINavigationController alloc]
+                                             initWithRootViewController: viewController];
+    self.window.rootViewController = navController;
+    
+    [self.window makeKeyAndVisible];
+    self.window.backgroundColor = [UIColor whiteColor];
+    
     return YES;
 }
 
