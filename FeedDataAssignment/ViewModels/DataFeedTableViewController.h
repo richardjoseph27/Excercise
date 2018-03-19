@@ -7,7 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FeedDataRefreshControl.h"
 
-@interface DataFeedTableViewController : UITableViewController
+@interface DataFeedTableViewController : UITableViewController{
+    NSMutableArray *indexesToBeReloadedAfterImageDownload;
+}
+
+// the main data model for our UITableView
+@property (nonatomic, strong) NSArray *feedData;
+@property (nonatomic, strong) FeedDataRefreshControl *refreshControl;
 
 @end

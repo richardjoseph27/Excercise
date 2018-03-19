@@ -18,6 +18,8 @@
 		79E5C86420603B19000D84D8 /* FeedDataRefreshControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86320603B19000D84D8 /* FeedDataRefreshControl.m */; };
 		79E5C86720603EB6000D84D8 /* DataParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86620603EB6000D84D8 /* DataParser.m */; };
 		79E5C86A20603F10000D84D8 /* DataObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86920603F10000D84D8 /* DataObject.m */; };
+		79E5C86E206040A3000D84D8 /* ServiceConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86D206040A3000D84D8 /* ServiceConnection.m */; };
+		79E5C87120604121000D84D8 /* ImageDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C87020604121000D84D8 /* ImageDownloader.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +64,10 @@
 		79E5C86820603F10000D84D8 /* DataObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataObject.h; sourceTree = "<group>"; };
 		79E5C86920603F10000D84D8 /* DataObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataObject.m; sourceTree = "<group>"; };
 		79E5C86B20603F4C000D84D8 /* ServerConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServerConstants.h; sourceTree = "<group>"; };
+		79E5C86C206040A3000D84D8 /* ServiceConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceConnection.h; sourceTree = "<group>"; };
+		79E5C86D206040A3000D84D8 /* ServiceConnection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ServiceConnection.m; sourceTree = "<group>"; };
+		79E5C86F20604121000D84D8 /* ImageDownloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDownloader.h; sourceTree = "<group>"; };
+		79E5C87020604121000D84D8 /* ImageDownloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageDownloader.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,6 +184,10 @@
 				79E5C86620603EB6000D84D8 /* DataParser.m */,
 				79E5C86820603F10000D84D8 /* DataObject.h */,
 				79E5C86920603F10000D84D8 /* DataObject.m */,
+				79E5C86C206040A3000D84D8 /* ServiceConnection.h */,
+				79E5C86D206040A3000D84D8 /* ServiceConnection.m */,
+				79E5C86F20604121000D84D8 /* ImageDownloader.h */,
+				79E5C87020604121000D84D8 /* ImageDownloader.m */,
 				79E5C86B20603F4C000D84D8 /* ServerConstants.h */,
 			);
 			path = Models;
@@ -318,10 +328,12 @@
 				79E5C86420603B19000D84D8 /* FeedDataRefreshControl.m in Sources */,
 				79E5C83620603399000D84D8 /* main.m in Sources */,
 				79E5C86A20603F10000D84D8 /* DataObject.m in Sources */,
+				79E5C87120604121000D84D8 /* ImageDownloader.m in Sources */,
 				79E5C82820603399000D84D8 /* AppDelegate.m in Sources */,
 				79E5C85E206038CC000D84D8 /* DataFeedTableViewController.m in Sources */,
 				79E5C86720603EB6000D84D8 /* DataParser.m in Sources */,
 				79E5C86120603AB9000D84D8 /* FeedDataTableViewCell.m in Sources */,
+				79E5C86E206040A3000D84D8 /* ServiceConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

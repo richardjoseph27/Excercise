@@ -8,20 +8,40 @@
 
 #import "DataFeedTableViewController.h"
 
-@interface DataFeedTableViewController ()
+#import "DataFeedTableViewController.h"
+#import "ServiceConnection.h"
+#import "FeedDataTableViewCell.h"
+#import "ImageDownloader.h"
 
+static NSString *CellIdentifier = @"FeedTableCell";
+static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
+
+#pragma mark -
+
+@interface DataFeedTableViewController () <UIScrollViewDelegate>
+
+// the set of IconDownloader objects for each app
+@property (nonatomic, strong) NSMutableDictionary *imageDownloadsInProgress;
+//@property (nonatomic, strong) NSMutableArray *indexesToBeReloadedAfterImageDownload;
+
+@end
+
+@interface DataFeedTableViewController ()
 @end
 
 @implementation DataFeedTableViewController
 
+@synthesize refreshControl;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    indexesToBeReloadedAfterImageDownload = [[NSMutableArray alloc] init];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.refreshControl = [[FeedDataRefreshControl alloc]init];
+    [self.refreshControl addTarget:self
+                            action:@selector(getFeedData)
+                  forControlEvents:UIControlEventValueChanged];
+    self.tableView.refreshControl = self.refreshControl;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -31,68 +51,173 @@
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Incomplete implementation, return the number of sections
-    return 0;
-}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete implementation, return the number of rows
-    return 0;
+    return self.feedData.count;
 }
 
-/*
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    FeedDataTableViewCell *cell = nil;
+    //FeedDataTableViewCell *cell = (FeedDataTableViewCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
-    // Configure the cell...
+    NSUInteger nodeCount = self.feedData.count;
+    
+    if (nodeCount == 0 && indexPath.row == 0)
+    {
+        // add a placeholder cell while waiting on table data
+        cell = [[FeedDataTableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:PlaceholderCellIdentifier];
+    }
+    else
+    {
+        cell = [[FeedDataTableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        
+        // Leave cells empty if there's no data yet
+        if (nodeCount > 0)
+        {
+            // Set up the cell representing the app
+            DataObject *dataObject = (self.feedData)[indexPath.row];
+            cell.textLabel.text = dataObject.title;
+            cell.detailTextLabel.text = dataObject.descriptionText;
+            
+            // Only load cached images; defer new downloads until scrolling ends
+            if (dataObject.imageURLString.length != 0) {
+                if (!dataObject.appIcon)
+                {
+                    if (self.tableView.dragging == NO && self.tableView.decelerating == NO)
+                    {
+                        [self startIconDownload:dataObject forIndexPath:indexPath];
+                        [indexesToBeReloadedAfterImageDownload addObject: indexPath];
+                        //[self.tableView reloadRowsAtIndexPaths: self.indexesToBeReloadedAfterImageDownload withRowAnimation: UITableViewRowAnimationNone];
+                        //[self.indexesToBeReloadedAfterImageDownload removeAllObjects];
+                        
+                    }
+                    // if a download is deferred or in progress, return a placeholder image
+                    cell.imageView.image = [UIImage imageNamed:@"placeHolder"];
+                }
+                else
+                {
+                    cell.imageView.image = dataObject.appIcon;
+                }
+            }
+        }
+    }
     
     return cell;
 }
-*/
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
+#pragma mark - Table cell image support
+- (void)startIconDownload:(DataObject *)appRecord forIndexPath:(NSIndexPath *)indexPath
+{
+    
+    ImageDownloader *imageDownloader = (self.imageDownloadsInProgress)[indexPath];
+    if (imageDownloader == nil)
+    {
+        imageDownloader = [[ImageDownloader alloc] init];
+        imageDownloader.dataObject = appRecord;
+        [imageDownloader setCompletionHandler:^{
+            
+            UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+            
+            // Display the newly loaded image
+            cell.imageView.image = appRecord.appIcon;
+            
+            // Remove the IconDownloader from the in progress list.
+            // This will result in it being deallocated.
+            [self.imageDownloadsInProgress removeObjectForKey:indexPath];
+            
+        }];
+        
+        (self.imageDownloadsInProgress)[indexPath] = imageDownloader;
+        [imageDownloader startDownload];
+        // [self.tableView reloadRowsAtIndexPaths: indexesToBeReloadedAfterImageDownload withRowAnimation: UITableViewRowAnimationNone];
+    }
 }
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+// -------------------------------------------------------------------------------
+//    loadImagesForOnscreenRows
+//  This method is used in case the user scrolled into a set of cells that don't
+//  have their images yet.
+// -------------------------------------------------------------------------------
+- (void)loadImagesForOnscreenRows
+{
+    if (self.feedData.count > 0)
+    {
+        NSArray *visiblePaths = [self.tableView indexPathsForVisibleRows];
+        for (NSIndexPath *indexPath in visiblePaths)
+        {
+            DataObject *dataObject = (self.feedData)[indexPath.row];
+            
+            if (!dataObject.appIcon)
+                // Avoid the app icon download if the app already has an icon
+            {
+                [self startIconDownload:dataObject forIndexPath:indexPath];
+            }
+        }
+    }
 }
-*/
 
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+
+#pragma mark - UIScrollViewDelegate
+
+// -------------------------------------------------------------------------------
+//    scrollViewDidEndDragging:willDecelerate:
+//  Load images for all onscreen rows when scrolling is finished.
+// -------------------------------------------------------------------------------
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    if (!decelerate)
+    {
+        [self loadImagesForOnscreenRows];
+    }
 }
-*/
 
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
+// -------------------------------------------------------------------------------
+//    scrollViewDidEndDecelerating:scrollView
+//  When scrolling stops, proceed to load the app icons that are on screen.
+// -------------------------------------------------------------------------------
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    [self loadImagesForOnscreenRows];
 }
-*/
 
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+#pragma mark - Refresh table view by pull down
+
+// -------------------------------------------------------------------------------
+//    getFeedData:
+//    this method will fetch the latest data from the server.
+// -------------------------------------------------------------------------------
+-(void) getFeedData{
+    ServiceConnection *serviceConnection = [[ServiceConnection alloc]init];
+    [serviceConnection setCompletionHandler:^(NSArray *refreshedData, NSString *navBarTitle) {
+        if (refreshedData.count > 0) {
+            self.feedData = refreshedData;
+            [self refreshTableData];
+        }else{
+            [self.refreshControl endRefreshing];
+        }
+    }];
+    [serviceConnection getFeedDataFromServer];
 }
-*/
+
+// -------------------------------------------------------------------------------
+//    refreshTableData:
+//    upon succesfful data retrieval refresh the table and dismisss refresh control
+// -------------------------------------------------------------------------------
+- (void)refreshTableData{
+    // Reload table data
+    
+    [self.tableView reloadData];
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"MMM d, h:mm a"];
+    NSString *title = [NSString stringWithFormat:@"Last update: %@", [formatter stringFromDate:[NSDate date]]];
+    NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
+                                                                forKey:NSForegroundColorAttributeName];
+    NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
+    self.refreshControl.attributedTitle = attributedTitle;
+    [self.refreshControl endRefreshing];
+}
 
 @end
+

@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "DataFeedTableViewController.h"
+#import "ServiceConnection.h"
 
 @interface AppDelegate ()
 
@@ -27,6 +28,20 @@
     [self.window makeKeyAndVisible];
     self.window.backgroundColor = [UIColor whiteColor];
     
+    ServiceConnection *serviceConnection = [[ServiceConnection alloc]init];
+    [serviceConnection setCompletionHandler:^(NSArray *refreshedData, NSString *navBarTitle) {
+        if (refreshedData.count > 0) {
+            viewController.feedData = refreshedData;
+            viewController.navigationController.navigationBar.topItem.title = navBarTitle;
+            [viewController.tableView reloadData];
+        }else{
+            NSLog(@"No data available to show");
+        }
+    }];
+    [serviceConnection getFeedDataFromServer];
+    
+    // show in the status bar that network activity is starting
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     return YES;
 }
 
