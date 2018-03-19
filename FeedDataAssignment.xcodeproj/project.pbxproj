@@ -16,6 +16,8 @@
 		79E5C85E206038CC000D84D8 /* DataFeedTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C85D206038CC000D84D8 /* DataFeedTableViewController.m */; };
 		79E5C86120603AB9000D84D8 /* FeedDataTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86020603AB9000D84D8 /* FeedDataTableViewCell.m */; };
 		79E5C86420603B19000D84D8 /* FeedDataRefreshControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86320603B19000D84D8 /* FeedDataRefreshControl.m */; };
+		79E5C86720603EB6000D84D8 /* DataParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86620603EB6000D84D8 /* DataParser.m */; };
+		79E5C86A20603F10000D84D8 /* DataObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86920603F10000D84D8 /* DataObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +57,11 @@
 		79E5C86020603AB9000D84D8 /* FeedDataTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedDataTableViewCell.m; sourceTree = "<group>"; };
 		79E5C86220603B19000D84D8 /* FeedDataRefreshControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedDataRefreshControl.h; sourceTree = "<group>"; };
 		79E5C86320603B19000D84D8 /* FeedDataRefreshControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedDataRefreshControl.m; sourceTree = "<group>"; };
+		79E5C86520603EB6000D84D8 /* DataParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataParser.h; sourceTree = "<group>"; };
+		79E5C86620603EB6000D84D8 /* DataParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataParser.m; sourceTree = "<group>"; };
+		79E5C86820603F10000D84D8 /* DataObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataObject.h; sourceTree = "<group>"; };
+		79E5C86920603F10000D84D8 /* DataObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataObject.m; sourceTree = "<group>"; };
+		79E5C86B20603F4C000D84D8 /* ServerConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServerConstants.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +174,11 @@
 		79E5C85B2060386E000D84D8 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				79E5C86520603EB6000D84D8 /* DataParser.h */,
+				79E5C86620603EB6000D84D8 /* DataParser.m */,
+				79E5C86820603F10000D84D8 /* DataObject.h */,
+				79E5C86920603F10000D84D8 /* DataObject.m */,
+				79E5C86B20603F4C000D84D8 /* ServerConstants.h */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -305,8 +317,10 @@
 			files = (
 				79E5C86420603B19000D84D8 /* FeedDataRefreshControl.m in Sources */,
 				79E5C83620603399000D84D8 /* main.m in Sources */,
+				79E5C86A20603F10000D84D8 /* DataObject.m in Sources */,
 				79E5C82820603399000D84D8 /* AppDelegate.m in Sources */,
 				79E5C85E206038CC000D84D8 /* DataFeedTableViewController.m in Sources */,
+				79E5C86720603EB6000D84D8 /* DataParser.m in Sources */,
 				79E5C86120603AB9000D84D8 /* FeedDataTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
