@@ -9,7 +9,7 @@
 #import "ImageDownloader.h"
 #import "DataObject.h"
 
-#define kAppIconSize 200
+#define kAppIconSize 150
 
 @interface ImageDownloader ()
 
@@ -19,14 +19,13 @@
 
 @implementation ImageDownloader
 
-- (void)startDownload
+- (void)startDownloadTask
 {
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:self.dataObject.imageURLString]];
-    
     // create an session data task to obtain and download the app icon
     _sessionTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         // in case we want to know the response status code
-        //NSInteger HTTPStatusCode = [(NSHTTPURLResponse *)response statusCode];
+        
         if (error != nil)
         {
             if ([error code] == NSURLErrorAppTransportSecurityRequiresSecureConnection)
@@ -36,29 +35,47 @@
                 //
                 abort();
             }
-            //[self handleError:error];
-        }
-        
-        [[NSOperationQueue mainQueue] addOperationWithBlock: ^{
-            
-            // Set appIcon and clear temporary data/image
-            UIImage *image = [[UIImage alloc] initWithData:data];
-            self.dataObject.appIcon = image;
-            if (image.size.width > kAppIconSize)
-            {
-                self.dataObject.appIcon = [self imageWithImage:image scaledToWidth:kAppIconSize];
-            }
-            else
-            {
-                self.dataObject.appIcon = image;
-            }
-            
-            // call our completion handler to tell our client that our icon is ready for display
+            NSLog(@"Text: %@, code: %ld", self.dataObject.title, (long)[(NSHTTPURLResponse *)response statusCode]);
+            self.dataObject.appIcon = [UIImage imageNamed:@"placeHolder"];
+            [self handleError:error];
             if (self.completionHandler != nil)
             {
                 self.completionHandler();
             }
-        }];
+            [self cancelDownload];
+        }else{
+            NSLog(@"Response: %ld", (long)[(NSHTTPURLResponse *)response statusCode]);
+            if ([(NSHTTPURLResponse *)response statusCode] != 200) {
+                self.dataObject.appIcon = [UIImage imageNamed:@"placeHolder"];
+                [self handleError:error];
+                if (self.completionHandler != nil)
+                {
+                    self.completionHandler();
+                }
+                [self cancelDownload];
+            }else{
+                [[NSOperationQueue mainQueue] addOperationWithBlock: ^{
+                    
+                    // Set appIcon and clear temporary data/image
+                    UIImage *image = [[UIImage alloc] initWithData:data];
+                    self.dataObject.appIcon = image;
+                    if (image.size.width > kAppIconSize)
+                    {
+                        self.dataObject.appIcon = [self imageWithImage:image scaledToWidth:kAppIconSize];
+                    }
+                    else
+                    {
+                        self.dataObject.appIcon = image;
+                    }
+                    
+                    // call our completion handler to tell our client that our icon is ready for display
+                    if (self.completionHandler != nil)
+                    {
+                        self.completionHandler();
+                    }
+                }];
+            }
+        }
     }];
     [self.sessionTask resume];
 }
@@ -87,6 +104,24 @@
     return newImage;
 }
 
+- (void)startDownload{
+    //NSLog(@"status: %ld",(long)[_sessionTask state]);
+    NSMutableArray *currentTasks = [[NSMutableArray alloc]init];
+    [[NSURLSession sharedSession] getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+        for (NSURLSessionDataTask *task in dataTasks)
+        {
+            [currentTasks addObject:[NSString stringWithFormat:@"%@", task.originalRequest.URL]];
+        }
+        NSLog(@"currentTask: %@", currentTasks);
+        if ([currentTasks containsObject:self.dataObject.imageURLString]) {
+            NSLog(@"do not start this download task again");
+        }else{
+            NSLog(@"do not start this download task again");
+            [self startDownloadTask];
+        }
+    }];
+}
+
 - (void)handleError:(NSError *)error
 {
     NSString *errorMessage = [error localizedDescription];
@@ -100,7 +135,9 @@
                                                      }];
     
     [alert addAction:OKAction];
+    
     [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
 }
 
 @end
+

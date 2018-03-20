@@ -7,8 +7,6 @@
 //
 
 #import "DataFeedTableViewController.h"
-
-#import "DataFeedTableViewController.h"
 #import "ServiceConnection.h"
 #import "FeedDataTableViewCell.h"
 #import "ImageDownloader.h"
@@ -35,7 +33,6 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    indexesToBeReloadedAfterImageDownload = [[NSMutableArray alloc] init];
     
     self.refreshControl = [[FeedDataRefreshControl alloc]init];
     [self.refreshControl addTarget:self
@@ -58,7 +55,6 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     FeedDataTableViewCell *cell = nil;
-    //FeedDataTableViewCell *cell = (FeedDataTableViewCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     NSUInteger nodeCount = self.feedData.count;
     
@@ -86,10 +82,6 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
                     if (self.tableView.dragging == NO && self.tableView.decelerating == NO)
                     {
                         [self startIconDownload:dataObject forIndexPath:indexPath];
-                        [indexesToBeReloadedAfterImageDownload addObject: indexPath];
-                        //[self.tableView reloadRowsAtIndexPaths: self.indexesToBeReloadedAfterImageDownload withRowAnimation: UITableViewRowAnimationNone];
-                        //[self.indexesToBeReloadedAfterImageDownload removeAllObjects];
-                        
                     }
                     // if a download is deferred or in progress, return a placeholder image
                     cell.imageView.image = [UIImage imageNamed:@"placeHolder"];
@@ -98,6 +90,10 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
                 {
                     cell.imageView.image = dataObject.appIcon;
                 }
+            }else{
+                //if image url is null set the placeholder.
+                dataObject.appIcon = [UIImage imageNamed:@"placeHolder"];
+                cell.imageView.image = dataObject.appIcon;
             }
         }
     }
@@ -108,28 +104,25 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
 #pragma mark - Table cell image support
 - (void)startIconDownload:(DataObject *)appRecord forIndexPath:(NSIndexPath *)indexPath
 {
-    
+    NSLog(@"data pending: %@", appRecord.title);
     ImageDownloader *imageDownloader = (self.imageDownloadsInProgress)[indexPath];
     if (imageDownloader == nil)
     {
         imageDownloader = [[ImageDownloader alloc] init];
         imageDownloader.dataObject = appRecord;
         [imageDownloader setCompletionHandler:^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                [self.tableView beginUpdates];
+                cell.imageView.image = appRecord.appIcon;
+                [self.tableView endUpdates];
+            });
             
-            UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-            
-            // Display the newly loaded image
-            cell.imageView.image = appRecord.appIcon;
-            
-            // Remove the IconDownloader from the in progress list.
-            // This will result in it being deallocated.
             [self.imageDownloadsInProgress removeObjectForKey:indexPath];
-            
         }];
         
         (self.imageDownloadsInProgress)[indexPath] = imageDownloader;
         [imageDownloader startDownload];
-        // [self.tableView reloadRowsAtIndexPaths: indexesToBeReloadedAfterImageDownload withRowAnimation: UITableViewRowAnimationNone];
     }
 }
 
