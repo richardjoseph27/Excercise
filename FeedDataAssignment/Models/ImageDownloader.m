@@ -135,8 +135,14 @@
                                                      }];
     
     [alert addAction:OKAction];
+    UIBarButtonItem *button;
+    UIViewController *vc = [UIApplication sharedApplication].keyWindow.rootViewController;
+    alert.popoverPresentationController.barButtonItem = button;
+    alert.popoverPresentationController.sourceView = vc.view;
     
-    [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
+    if(vc.presentedViewController == nil) {
+        [vc presentViewController:alert animated:YES completion:nil];
+    }
 }
 
 @end
