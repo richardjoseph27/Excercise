@@ -9,14 +9,16 @@
 #ifndef ServerConstants_h
 #define ServerConstants_h
 
+
+
 //server URL
-#define kServerURL @"https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/facts.json"
+static NSString * kServerURL = @"https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/facts.json";
 
 //JSOn parsing keys
-#define kParsingKeyMainTitle @"title"
-#define kParsingKeyDataRows @"rows"
-#define kParsingKeyTitle @"title"
-#define kParsingKeyDescriptionText @"description"
-#define kParsingKeyImageURLString @"imageHref"
+static const NSString * kParsingKeyMainTitle = @"title";
+static const NSString *kParsingKeyDataRows = @"rows";
+static const NSString * kParsingKeyTitle = @"title";
+static const NSString * kParsingKeyDescriptionText = @"description";
+static const NSString * kParsingKeyImageURLString = @"imageHref";
 
 #endif /* ServerConstants_h */

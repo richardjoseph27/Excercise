@@ -12,7 +12,7 @@
 
 @implementation ServiceConnection
 
--(void) getFeedDataFromServer{
+- (void) getFeedDataFromServer{
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:kServerURL]];
     
     // create an session data task json feed
@@ -65,7 +65,7 @@
                     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
                     if (weakParser.feedList != nil)
                     {
-                        // call our completion handler to tell our client that our icon is ready for display
+                        // call completion handler to tell our client that our icon is ready for display
                         if (self.completionHandler != nil)
                         {
                             weakSelf.completionHandler(weakParser.feedList, weakParser.navBarTitle);

@@ -19,7 +19,7 @@
 
 @property (nonatomic, copy) void (^completionHandler)(NSArray *refreshedData, NSString *navBarTitle);
 
--(void) getFeedDataFromServer;
+- (void) getFeedDataFromServer;
 - (void)handleError:(NSError *)error;
 
 @end

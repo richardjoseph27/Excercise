@@ -9,7 +9,10 @@
 #import "ImageDownloader.h"
 #import "DataObject.h"
 
-#define kAppIconSize 150
+#import "ImageDownloader.h"
+#import "DataObject.h"
+
+static const int kAppIconSize = 200;
 
 @interface ImageDownloader ()
 
@@ -35,7 +38,7 @@
                 //
                 abort();
             }
-            NSLog(@"Text: %@, code: %ld", self.dataObject.title, (long)[(NSHTTPURLResponse *)response statusCode]);
+            //in case of error set default image
             self.dataObject.appIcon = [UIImage imageNamed:@"placeHolder"];
             [self handleError:error];
             if (self.completionHandler != nil)
@@ -44,8 +47,8 @@
             }
             [self cancelDownload];
         }else{
-            NSLog(@"Response: %ld", (long)[(NSHTTPURLResponse *)response statusCode]);
             if ([(NSHTTPURLResponse *)response statusCode] != 200) {
+                //handle status code 404, 403, 400 error set default image
                 self.dataObject.appIcon = [UIImage imageNamed:@"placeHolder"];
                 [self handleError:error];
                 if (self.completionHandler != nil)
@@ -59,6 +62,7 @@
                     // Set appIcon and clear temporary data/image
                     UIImage *image = [[UIImage alloc] initWithData:data];
                     self.dataObject.appIcon = image;
+                    //scale image wrt aspect ratio
                     if (image.size.width > kAppIconSize)
                     {
                         self.dataObject.appIcon = [self imageWithImage:image scaledToWidth:kAppIconSize];
@@ -80,15 +84,13 @@
     [self.sessionTask resume];
 }
 
-// -------------------------------------------------------------------------------
-//    cancelDownload
-// -------------------------------------------------------------------------------
 - (void)cancelDownload
 {
     [self.sessionTask cancel];
     _sessionTask = nil;
 }
 
+//scale the image without disturbing the aspect ratio
 -(UIImage*)imageWithImage: (UIImage*) sourceImage scaledToWidth: (float) i_width
 {
     float oldWidth = sourceImage.size.width;
@@ -105,18 +107,14 @@
 }
 
 - (void)startDownload{
-    //NSLog(@"status: %ld",(long)[_sessionTask state]);
     NSMutableArray *currentTasks = [[NSMutableArray alloc]init];
     [[NSURLSession sharedSession] getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
         for (NSURLSessionDataTask *task in dataTasks)
         {
             [currentTasks addObject:[NSString stringWithFormat:@"%@", task.originalRequest.URL]];
         }
-        NSLog(@"currentTask: %@", currentTasks);
-        if ([currentTasks containsObject:self.dataObject.imageURLString]) {
-            NSLog(@"do not start this download task again");
-        }else{
-            NSLog(@"do not start this download task again");
+        //check if the download is already in progress.
+        if (![currentTasks containsObject:self.dataObject.imageURLString]) {
             [self startDownloadTask];
         }
     }];
@@ -146,4 +144,3 @@
 }
 
 @end
-

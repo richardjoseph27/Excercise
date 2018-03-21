@@ -12,7 +12,7 @@
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     if (self) {
         //customize the cell
         self.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -23,5 +23,5 @@
     }
     return self;
 }
-
 @end
+

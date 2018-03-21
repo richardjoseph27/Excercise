@@ -12,15 +12,13 @@
 #import "ImageDownloader.h"
 
 static NSString *CellIdentifier = @"FeedTableCell";
-static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
 
 #pragma mark -
 
 @interface DataFeedTableViewController () <UIScrollViewDelegate>
 
-// the set of IconDownloader objects for each app
+// the set of IconDownloader objects
 @property (nonatomic, strong) NSMutableDictionary *imageDownloadsInProgress;
-//@property (nonatomic, strong) NSMutableArray *indexesToBeReloadedAfterImageDownload;
 
 @end
 
@@ -39,6 +37,9 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
                             action:@selector(getFeedData)
                   forControlEvents:UIControlEventValueChanged];
     self.tableView.refreshControl = self.refreshControl;
+    [self.tableView registerClass:[FeedDataTableViewCell class] forCellReuseIdentifier: CellIdentifier];
+    
+    _imageDownloadsInProgress = [NSMutableDictionary dictionary];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -54,57 +55,44 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    FeedDataTableViewCell *cell = nil;
-    
-    NSUInteger nodeCount = self.feedData.count;
-    
-    if (nodeCount == 0 && indexPath.row == 0)
-    {
-        // add a placeholder cell while waiting on table data
-        cell = [[FeedDataTableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:PlaceholderCellIdentifier];
+    FeedDataTableViewCell *cell = (FeedDataTableViewCell*) [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        cell = [[FeedDataTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
-    else
-    {
-        cell = [[FeedDataTableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+    
+    if (self.feedData.count > 0){
+        // Set up the cell representing the app
+        DataObject *dataObject = (self.feedData)[indexPath.row];
+        cell.textLabel.text = dataObject.title;
+        cell.detailTextLabel.text = dataObject.descriptionText;
         
-        // Leave cells empty if there's no data yet
-        if (nodeCount > 0)
-        {
-            // Set up the cell representing the app
-            DataObject *dataObject = (self.feedData)[indexPath.row];
-            cell.textLabel.text = dataObject.title;
-            cell.detailTextLabel.text = dataObject.descriptionText;
-            
-            // Only load cached images; defer new downloads until scrolling ends
-            if (dataObject.imageURLString.length != 0) {
-                if (!dataObject.appIcon)
+        // Only load cached images; defer new downloads until scrolling ends
+        if (dataObject.imageURLString.length != 0) {
+            if (!dataObject.appIcon)
+            {
+                if (self.tableView.dragging == NO && self.tableView.decelerating == NO)
                 {
-                    if (self.tableView.dragging == NO && self.tableView.decelerating == NO)
-                    {
-                        [self startIconDownload:dataObject forIndexPath:indexPath];
-                    }
-                    // if a download is deferred or in progress, return a placeholder image
-                    cell.imageView.image = [UIImage imageNamed:@"placeHolder"];
+                    [self startIconDownload:dataObject forIndexPath:indexPath];
                 }
-                else
-                {
-                    cell.imageView.image = dataObject.appIcon;
-                }
-            }else{
-                //if image url is null set the placeholder.
-                dataObject.appIcon = [UIImage imageNamed:@"placeHolder"];
+                // if a download is deferred or in progress, return a placeholder image
+                cell.imageView.image = [UIImage imageNamed:@"placeHolder"];
+            }
+            else
+            {
                 cell.imageView.image = dataObject.appIcon;
             }
+        }else{
+            //if image url is null set the placeholder.
+            dataObject.appIcon = [UIImage imageNamed:@"placeHolder"];
+            cell.imageView.image = dataObject.appIcon;
         }
     }
-    
     return cell;
 }
 
 #pragma mark - Table cell image support
 - (void)startIconDownload:(DataObject *)appRecord forIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"data pending: %@", appRecord.title);
     ImageDownloader *imageDownloader = (self.imageDownloadsInProgress)[indexPath];
     if (imageDownloader == nil)
     {
@@ -126,11 +114,6 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
     }
 }
 
-// -------------------------------------------------------------------------------
-//    loadImagesForOnscreenRows
-//  This method is used in case the user scrolled into a set of cells that don't
-//  have their images yet.
-// -------------------------------------------------------------------------------
 - (void)loadImagesForOnscreenRows
 {
     if (self.feedData.count > 0)
@@ -152,10 +135,6 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
 
 #pragma mark - UIScrollViewDelegate
 
-// -------------------------------------------------------------------------------
-//    scrollViewDidEndDragging:willDecelerate:
-//  Load images for all onscreen rows when scrolling is finished.
-// -------------------------------------------------------------------------------
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     if (!decelerate)
@@ -164,10 +143,6 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
     }
 }
 
-// -------------------------------------------------------------------------------
-//    scrollViewDidEndDecelerating:scrollView
-//  When scrolling stops, proceed to load the app icons that are on screen.
-// -------------------------------------------------------------------------------
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
     [self loadImagesForOnscreenRows];
@@ -176,10 +151,7 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
 
 #pragma mark - Refresh table view by pull down
 
-// -------------------------------------------------------------------------------
-//    getFeedData:
-//    this method will fetch the latest data from the server.
-// -------------------------------------------------------------------------------
+//this method will fetch the latest data from the server.
 -(void) getFeedData{
     ServiceConnection *serviceConnection = [[ServiceConnection alloc]init];
     [serviceConnection setCompletionHandler:^(NSArray *refreshedData, NSString *navBarTitle) {
@@ -193,13 +165,9 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
     [serviceConnection getFeedDataFromServer];
 }
 
-// -------------------------------------------------------------------------------
-//    refreshTableData:
-//    upon succesfful data retrieval refresh the table and dismisss refresh control
-// -------------------------------------------------------------------------------
+//reload tableview and set the last updated time on the refresh control
 - (void)refreshTableData{
     // Reload table data
-    
     [self.tableView reloadData];
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -213,4 +181,3 @@ static NSString *PlaceholderCellIdentifier = @"PlaceholderCell";
 }
 
 @end
-

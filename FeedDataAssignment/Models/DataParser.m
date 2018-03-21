@@ -10,7 +10,7 @@
 #import "DataObject.h"
 #import "ServerConstants.h"
 
-#define kRowDataIsEmpty 3
+static int kRowDataIsEmpty = 3;
 
 @interface DataParser()
 // Redeclare feedList so we can modify it within this class
@@ -30,14 +30,11 @@
     return self;
 }
 
--(void)main{
-    
+- (void)main{
     NSMutableArray *allFeedDataArray = [[NSMutableArray alloc] init];
     NSError *JSONError = nil;
     id json = [NSJSONSerialization JSONObjectWithData:[[[NSString alloc] initWithData:_dataToParse encoding:NSASCIIStringEncoding] dataUsingEncoding:NSUTF8StringEncoding] options:0 error: &JSONError];
-    if (JSONError) {
-        NSLog(@"Json parsing error");
-    }else{
+    if (!JSONError) {
         NSArray* dataRowArray = [json objectForKey:kParsingKeyDataRows];
         self.navBarTitle = [json objectForKey:kParsingKeyMainTitle];
         
@@ -68,13 +65,12 @@
                 dataObject.imageURLString = [dict objectForKey:kParsingKeyImageURLString];
             }
             
-            if (kRowDataIsEmpty == allDataEmptyCheck) {
-                NSLog(@"no data available for this row");
-            }else{
+            if (kRowDataIsEmpty != allDataEmptyCheck) {
                 [allFeedDataArray addObject: dataObject];
             }
         }
     }
+    
     if (![self isCancelled])
     {
         // Set appRecordList to the result of our parsing

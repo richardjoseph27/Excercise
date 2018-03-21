@@ -28,14 +28,13 @@
     [self.window makeKeyAndVisible];
     self.window.backgroundColor = [UIColor whiteColor];
     
+    //initial JSON feed loading
     ServiceConnection *serviceConnection = [[ServiceConnection alloc]init];
     [serviceConnection setCompletionHandler:^(NSArray *refreshedData, NSString *navBarTitle) {
         if (refreshedData.count > 0) {
             viewController.feedData = refreshedData;
             viewController.navigationController.navigationBar.topItem.title = navBarTitle;
             [viewController.tableView reloadData];
-        }else{
-            NSLog(@"No data available to show");
         }
     }];
     [serviceConnection getFeedDataFromServer];
