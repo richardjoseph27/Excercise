@@ -1,8 +1,10 @@
 # Excercise
 “Proof of concept ” app which consumes a REST service and displays photos with headings and descriptions. It’s a universal and supporting both landscape and portrait orientations.
+Xcode version: 9.1
+iOS deployment target: 11.1
 
 	1.	Displays the content (image, title and description) in a UITablview
-	2.	Title in the nabber is updated from the JSON feed.
+	2.	Title in the navbar is updated from the JSON feed.
 	3.	Tableview row height is dynamic based upon the contents
 	4.	Images aspect ratio has not been changed.
 	5.	Images are lazily loaded.
