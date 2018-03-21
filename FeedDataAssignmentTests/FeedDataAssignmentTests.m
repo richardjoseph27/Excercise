@@ -7,8 +7,12 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "ServiceConnection.h"
+#import "ImageDownloader.h"
 
 @interface FeedDataAssignmentTests : XCTestCase
+@property (nonatomic, strong) ServiceConnection *testServiceConnection;
+@property (nonatomic, strong) ImageDownloader *testImageDownloader;
 
 @end
 
@@ -22,18 +26,31 @@
 - (void)tearDown {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
+    self.testServiceConnection = nil;
+    self.testImageDownloader = nil;
+}
+
+- (void) testGetServerData{
+    [self.testServiceConnection getFeedDataFromServer];
 }
 
 - (void)testExample {
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
+    //ServiceConnection *serviceConnectinoTest = [[ServiceConnection alloc] init];
+    NSError *err = nil;
+    [self.testServiceConnection handleError:err];
 }
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
+- (void)testPerformanceGetServerData {
     [self measureBlock:^{
-        // Put the code you want to measure the time of here.
+        [self.testServiceConnection getFeedDataFromServer];
     }];
+}
+
+- (void)testImageDownload{
+    // [self.imageDownloaderTest dataObject];
+    XCTAssertNil([self.testImageDownloader dataObject], @"Data object is nil");
 }
 
 @end

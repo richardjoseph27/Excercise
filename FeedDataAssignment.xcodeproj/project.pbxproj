@@ -7,6 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		792F783E2062F99800CBCB34 /* DataParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86620603EB6000D84D8 /* DataParser.m */; };
+		792F783F2062F99900CBCB34 /* DataParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86620603EB6000D84D8 /* DataParser.m */; };
+		792F78402062F99F00CBCB34 /* DataObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86920603F10000D84D8 /* DataObject.m */; };
+		792F78412062F9A000CBCB34 /* DataObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86920603F10000D84D8 /* DataObject.m */; };
+		792F78422062F9A500CBCB34 /* ServiceConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86D206040A3000D84D8 /* ServiceConnection.m */; };
+		792F78432062F9A600CBCB34 /* ServiceConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86D206040A3000D84D8 /* ServiceConnection.m */; };
+		792F78442062F9AA00CBCB34 /* ImageDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C87020604121000D84D8 /* ImageDownloader.m */; };
+		792F78452062F9AB00CBCB34 /* ImageDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C87020604121000D84D8 /* ImageDownloader.m */; };
+		792F78462062F9B200CBCB34 /* FeedDataTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86020603AB9000D84D8 /* FeedDataTableViewCell.m */; };
+		792F78482062F9B700CBCB34 /* FeedDataRefreshControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86320603B19000D84D8 /* FeedDataRefreshControl.m */; };
+		792F784A2062F9BF00CBCB34 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C82720603399000D84D8 /* AppDelegate.m */; };
+		792F784B2062F9BF00CBCB34 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C82720603399000D84D8 /* AppDelegate.m */; };
+		792F784C2062F9C300CBCB34 /* DataFeedTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C85D206038CC000D84D8 /* DataFeedTableViewController.m */; };
+		792F784D2062F9C400CBCB34 /* DataFeedTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C85D206038CC000D84D8 /* DataFeedTableViewController.m */; };
+		792F784E2062F9F300CBCB34 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C83520603399000D84D8 /* main.m */; };
+		792F784F2062F9F400CBCB34 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C83520603399000D84D8 /* main.m */; };
+		792F78502062FBE100CBCB34 /* FeedDataTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86020603AB9000D84D8 /* FeedDataTableViewCell.m */; };
+		792F78512062FC0700CBCB34 /* FeedDataRefreshControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C86320603B19000D84D8 /* FeedDataRefreshControl.m */; };
 		79E5C82820603399000D84D8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E5C82720603399000D84D8 /* AppDelegate.m */; };
 		79E5C83020603399000D84D8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79E5C82F20603399000D84D8 /* Assets.xcassets */; };
 		79E5C83320603399000D84D8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 79E5C83120603399000D84D8 /* LaunchScreen.storyboard */; };
@@ -264,7 +282,7 @@
 					};
 					79E5C83A20603399000D84D8 = {
 						CreatedOnToolsVersion = 9.1;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						TestTargetID = 79E5C82220603399000D84D8;
 					};
 					79E5C84520603399000D84D8 = {
@@ -341,7 +359,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				792F784E2062F9F300CBCB34 /* main.m in Sources */,
+				792F78402062F99F00CBCB34 /* DataObject.m in Sources */,
+				792F78482062F9B700CBCB34 /* FeedDataRefreshControl.m in Sources */,
+				792F783E2062F99800CBCB34 /* DataParser.m in Sources */,
+				792F78442062F9AA00CBCB34 /* ImageDownloader.m in Sources */,
+				792F784A2062F9BF00CBCB34 /* AppDelegate.m in Sources */,
+				792F784C2062F9C300CBCB34 /* DataFeedTableViewController.m in Sources */,
 				79E5C84020603399000D84D8 /* FeedDataAssignmentTests.m in Sources */,
+				792F78422062F9A500CBCB34 /* ServiceConnection.m in Sources */,
+				792F78462062F9B200CBCB34 /* FeedDataTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,7 +376,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				792F78412062F9A000CBCB34 /* DataObject.m in Sources */,
+				792F783F2062F99900CBCB34 /* DataParser.m in Sources */,
+				792F78502062FBE100CBCB34 /* FeedDataTableViewCell.m in Sources */,
+				792F784D2062F9C400CBCB34 /* DataFeedTableViewController.m in Sources */,
+				792F784B2062F9BF00CBCB34 /* AppDelegate.m in Sources */,
+				792F78512062FC0700CBCB34 /* FeedDataRefreshControl.m in Sources */,
+				792F78452062F9AB00CBCB34 /* ImageDownloader.m in Sources */,
 				79E5C84B20603399000D84D8 /* FeedDataAssignmentUITests.m in Sources */,
+				792F784F2062F9F400CBCB34 /* main.m in Sources */,
+				792F78432062F9A600CBCB34 /* ServiceConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,12 +552,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 9T4X274L7F;
 				INFOPLIST_FILE = FeedDataAssignmentTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wipro.FeedDataAssignmentTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FeedDataAssignment.app/FeedDataAssignment";
 			};
@@ -531,12 +568,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 9T4X274L7F;
 				INFOPLIST_FILE = FeedDataAssignmentTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wipro.FeedDataAssignmentTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FeedDataAssignment.app/FeedDataAssignment";
 			};
