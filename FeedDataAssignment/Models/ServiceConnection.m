@@ -36,6 +36,11 @@
                     [self handleError:error];
                 }
             }];
+            if (self.completionHandler != nil)
+            {
+                __weak ServiceConnection *weakSelf = self;
+                weakSelf.completionHandler([[NSArray alloc]init],@"");
+            }
         }
         else
         {

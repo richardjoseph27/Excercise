@@ -159,7 +159,9 @@ static NSString *CellIdentifier = @"FeedTableCell";
             self.feedData = refreshedData;
             [self refreshTableData];
         }else{
-            [self.refreshControl endRefreshing];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.refreshControl endRefreshing];
+            });
         }
     }];
     [serviceConnection getFeedDataFromServer];
