@@ -122,7 +122,9 @@ static const int kAppIconSize = 200;
 
 - (void)handleError:(NSError *)error
 {
-    NSString *errorMessage = [error localizedDescription];
+    NSLog(@"%@",[error localizedDescription]);
+    //uncomment beow code to show alert view when image download fails.
+    /*NSString *errorMessage = [error localizedDescription];
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error in connection", @"")
                                                                    message:errorMessage
                                                             preferredStyle:UIAlertControllerStyleActionSheet];
@@ -140,7 +142,7 @@ static const int kAppIconSize = 200;
     
     if(vc.presentedViewController == nil) {
         [vc presentViewController:alert animated:YES completion:nil];
-    }
+    }*/
 }
 
 @end
